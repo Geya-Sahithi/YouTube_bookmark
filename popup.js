@@ -1,5 +1,6 @@
 import { getActiveTabURL } from "./utils.js";
 
+// Append the newBookmarkElement to the bookmarks element.
 const addNewBookmark = (bookmarks, bookmark) => {
   const bookmarkTitleElement = document.createElement("div");
   const controlsElement = document.createElement("div");
@@ -21,6 +22,11 @@ const addNewBookmark = (bookmarks, bookmark) => {
   bookmarks.appendChild(newBookmarkElement);
 };
 
+
+// The function viewBookmarks takes in an array of bookmarks as a parameter. 
+// It then uses the bookmarks array to create the HTML elements for each 
+// bookmark and add them to the page. It also handles the case where there 
+// are no bookmarks to show.
 const viewBookmarks = (currentBookmarks=[]) => {
   const bookmarksElement = document.getElementById("bookmarks");
   bookmarksElement.innerHTML = "";
@@ -37,6 +43,9 @@ const viewBookmarks = (currentBookmarks=[]) => {
   return;
 };
 
+// 1. First we get the timestamp of the bookmark and the active tab URL.
+// 2. Then we send a message to the active tab with the bookmark time.
+// 3. In the content script we will set the video time to the bookmark time.
 const onPlay = async e => {
   const bookmarkTime = e.target.parentNode.parentNode.getAttribute("timestamp");
   const activeTab = await getActiveTabURL();
@@ -47,6 +56,12 @@ const onPlay = async e => {
   });
 };
 
+
+// 1. The first thing we do is to get the current tab ID and the timestamp of the bookmark we want to delete.
+// 2. We get the bookmark element by its ID, which is "bookmark-" + timestamp.
+// 3. We remove the bookmark element from the list.
+// 4. We send a DELETE message to the content script. 
+// 5. We call viewBookmarks in the callback function to refresh the bookmarks list.
 const onDelete = async e => {
   const activeTab = await getActiveTabURL();
   const bookmarkTime = e.target.parentNode.parentNode.getAttribute("timestamp");
@@ -82,6 +97,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     chrome.storage.sync.get([currentVideo], (data) => {
       const currentVideoBookmarks = data[currentVideo] ? JSON.parse(data[currentVideo]) : [];
 
+// We are using the viewBookmarks function to show the bookmarks in the DOM.
       viewBookmarks(currentVideoBookmarks);
     });
   } else {
