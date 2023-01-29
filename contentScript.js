@@ -5,12 +5,17 @@
   
     const fetchBookmarks = () => {
       return new Promise((resolve) => {
+      
+// We call the chrome.storage.sync.get method to fetch the bookmarks for the current video.
         chrome.storage.sync.get([currentVideo], (obj) => {
           resolve(obj[currentVideo] ? JSON.parse(obj[currentVideo]) : []);
         });
       });
     };
   
+// 1. First, we get the current time from the player and create a new bookmark object with it.
+// 2. Then we fetch the current bookmarks and add the new bookmark to the array.
+// 3. Finally, we save the new bookmarks to Chrome's storage.
     const addNewBookmarkEventHandler = async () => {
       const currentTime = youtubePlayer.currentTime;
       const newBookmark = {
@@ -33,6 +38,7 @@
       if (!bookmarkBtnExists) {
         const bookmarkBtn = document.createElement("img");
   
+  // We are getting the current video bookmarks from the chrome storage. 
         bookmarkBtn.src = chrome.runtime.getURL("./assets/bookmark.png");
         bookmarkBtn.className = "ytp-button " + "bookmark-btn";
         bookmarkBtn.title = "Click to bookmark current timestamp";
